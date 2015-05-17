@@ -1,6 +1,7 @@
 __author__ = 'bjornkj'
 from PIL import Image
 import ImageDraw
+import time
 from random import choice
 from math import sqrt
 
@@ -11,13 +12,12 @@ class ImageGenome(object):
         self._end = (0, 0)
         self._points = [choice(available_pixels) for _ in xrange(20)]
         self._size = size
-        print self._points
 
-    def render(self, fname):
+    def render(self):
         img = Image.new('RGB', self._size, "white")
         d = ImageDraw.Draw(img)
         d.line(self._points, fill=0, width=3)
-        img.save(fname)
+        return img
 
     def length(self):
         l = 0
@@ -52,4 +52,10 @@ if __name__ == '__main__':
 
     ig = ImageGenome(s, im.size)
     print ig.length()
-    ig.render('res/test.png')
+    generation = sorted([ImageGenome(s, im.size) for _ in xrange(200)], key=lambda x:x.length)
+    generation[0].render().save("res/test2.png")
+    n = 0
+    for i in generation[:20]:
+        i.render().save('res/test' + str(n) + '.png')
+        n += 1
+    time.sleep(10)
